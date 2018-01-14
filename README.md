@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # PHP 5.3 Apache
 
 PHP 5.3 [reached EOL](http://php.net/eol.php) on 14 Aug 2014 and thus, official docker support was [dropped](https://github.com/docker-library/php/pull/20). I still needed to run 5.3 so I built this image based on the latest official builds of PHP.
@@ -65,3 +66,7 @@ of this image.
 # License
 
 View [license information](http://php.net/license/) for the software contained in this image.
+=======
+# imc-php
+imc Docker
+>>>>>>> 2a44728e15ec731525fa8965d0562f3debb132f5
