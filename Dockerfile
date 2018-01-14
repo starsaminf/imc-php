@@ -75,36 +75,33 @@ RUN set -x \
 		--with-openssl=/usr/local/ssl \
 	&& make -j"$(nproc)" \
 	&& make install \
-	&& dpkg -r bison libbison-dev
+	&& dpkg -r bison libbison-dev && make clean
+	
+	RUN apt-get update
+	RUN apt-get install -y nano 
+	RUN apt-get purge -y --auto-remove autoconf2.13 
+    RUN apt-get install -y libxml2-dev
+COPY docker-php-* /usr/local/bin/
+COPY apache2-foreground /usr/local/bin/
 
-
-	RUN set -x \
-	docker-php-ext-install zip \
-	&& docker-php-ext-install mbstring \
-	&& docker-php-ext-install msqlite3 \
-	&& docker-php-ext-install sqlite3 \
-	&& docker-php-ext-install po \
-	&& docker-php-ext-install pdo \
-	&& docker-php-ext-install pdo_mysql \
-	&& docker-php-ext-install mysql \
-	&& docker-php-ext-install json \
-	&& docker-php-ext-install imap \
-	&& docker-php-ext-install gd \
-	&& docker-php-ext-install curl \
-	&& docker-php-ext-install fileinfo \
-	&& apt install mysql \
-	&& apt install nano \
-	&& apt install imap-dev \
-	&& docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
-	&& php5enmod imap \
-	&& apt-get purge -y --auto-remove autoconf2.13 \
-    && make clean
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer 
+RUN docker-php-ext-install zip 
+RUN docker-php-ext-install mbstring 
+RUN docker-php-ext-install pdo 
+RUN docker-php-ext-install pdo_mysql 
+RUN docker-php-ext-install mysql 
+RUN docker-php-ext-install json 
+RUN docker-php-ext-install curl 
+RUN docker-php-ext-install fileinfo 
+RUN docker-php-ext-install gd
+RUN apt-get install -y libc-client-dev
+#RUN docker-php-ext-configure imap --with-imap --with-imap-ssl
+RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl 
+RUN docker-php-ext-install imap
 
     RUN  cp /usr/src/php/php.ini-production /usr/local/lib/php.ini \
 	&& ln -s /var/www/html/ /data/www/html/imc \
 
-COPY docker-php-* /usr/local/bin/
-COPY apache2-foreground /usr/local/bin/
 
 WORKDIR /var/www/html
 
