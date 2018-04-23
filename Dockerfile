@@ -51,7 +51,7 @@ RUN mkdir -p $PHP_INI_DIR/conf.d
 
 # php 5.3 needs older autoconf
 RUN set -x \
-	&& apt-get update && apt-get install -y autoconf2.13 && rm -r /var/lib/apt/lists/* \
+	&& apt-get update && apt-get install -y autoconf2.13 libpng-dev zlib1g-dev  zip && rm -r /var/lib/apt/lists/* \
 	&& curl -SLO http://launchpadlibrarian.net/140087283/libbison-dev_2.7.1.dfsg-1_amd64.deb \
 	&& curl -SLO http://launchpadlibrarian.net/140087282/bison_2.7.1.dfsg-1_amd64.deb \
 	&& dpkg -i libbison-dev_2.7.1.dfsg-1_amd64.deb \
@@ -93,12 +93,13 @@ RUN docker-php-ext-install mysql
 RUN docker-php-ext-install json 
 RUN docker-php-ext-install curl 
 RUN docker-php-ext-install fileinfo 
+RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
 RUN docker-php-ext-install gd
 RUN apt-get install -y libc-client-dev
 #RUN docker-php-ext-configure imap --with-imap --with-imap-ssl
 RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl 
 RUN docker-php-ext-install imap
-
+RUN docker-php-ext-install gd
     RUN  cp /usr/src/php/php.ini-production /usr/local/lib/php.ini \
 	&& ln -s /var/www/html/ /data/www/html/imc \
 
