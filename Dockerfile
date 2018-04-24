@@ -94,7 +94,8 @@ RUN docker-php-ext-install mysql
 RUN docker-php-ext-install json 
 RUN docker-php-ext-install curl 
 RUN docker-php-ext-install fileinfo 
-RUN docker-php-ext-configure gd --with-freetype-dir=/usr/local/ --with-jpeg-dir=/usr/local/
+RUN docker-php-ext-configure gd 
+#--with-freetype-dir=/usr/local/ --with-jpeg-dir=/usr/local/
 RUN docker-php-ext-install gd
 RUN apt-get install -y libc-client-dev
 #RUN docker-php-ext-configure imap --with-imap --with-imap-ssl
