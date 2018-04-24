@@ -5,7 +5,7 @@ RUN apt-get update && apt-get install -y locales
 RUN echo America\La_Paz > /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata
 
 
-RUN echo 'es_BO ISO-8859-1\n\'\
+RUN echo 'es_BO ISO-8859-1'\
 >> /etc/locale.gen &&  \
 usr/sbin/locale-gen
 
@@ -72,11 +72,12 @@ RUN set -x \
 		--with-mysql \
 		--with-mysqli \
 		--with-pdo-mysql \
+		--with-gd \
 		--with-openssl=/usr/local/ssl \
 	&& make -j"$(nproc)" \
 	&& make install \
 	&& dpkg -r bison libbison-dev && make clean
-	
+
 	RUN apt-get update
 	RUN apt-get install -y nano 
 	RUN apt-get purge -y --auto-remove autoconf2.13 
@@ -93,19 +94,18 @@ RUN docker-php-ext-install mysql
 RUN docker-php-ext-install json 
 RUN docker-php-ext-install curl 
 RUN docker-php-ext-install fileinfo 
-RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
+RUN docker-php-ext-configure gd --with-freetype-dir=/usr/local/ --with-jpeg-dir=/usr/local/
 RUN docker-php-ext-install gd
 RUN apt-get install -y libc-client-dev
 #RUN docker-php-ext-configure imap --with-imap --with-imap-ssl
 RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl 
 RUN docker-php-ext-install imap
 RUN docker-php-ext-install gd
-    RUN  cp /usr/src/php/php.ini-production /usr/local/lib/php.ini \
-	&& ln -s /var/www/html/ /data/www/html/imc \
+RUN  cp /usr/src/php/php.ini-production /usr/local/lib/php.ini \
+&& ln -s /var/www/html/ /data/www/html/imc \
 
 
 WORKDIR /var/www/html
 
 EXPOSE 80
 CMD ["apache2-foreground"]
-
