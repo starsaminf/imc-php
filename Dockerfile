@@ -4,13 +4,12 @@ MAINTAINER Eugene Ware <eugene@noblesamurai.com>
 RUN apt-get update && apt-get install -y locales
 RUN echo America\La_Paz > /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata
 
-
 RUN echo 'es_BO ISO-8859-1'\
 >> /etc/locale.gen &&  \
 usr/sbin/locale-gen
 
 
-RUN apt-get update && apt-get install -y curl && rm -r /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y curl libmcrypt-dev && rm -r /var/lib/apt/lists/*
 
 ##<apache2>##
 RUN apt-get update && apt-get install -y apache2-bin apache2-dev apache2.2-common --no-install-recommends && rm -rf /var/lib/apt/lists/*
@@ -102,6 +101,8 @@ RUN apt-get install -y libc-client-dev
 RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl 
 RUN docker-php-ext-install imap
 RUN docker-php-ext-install gd
+RUN docker-php-ext-install mcrypt
+
 RUN  cp /usr/src/php/php.ini-production /usr/local/lib/php.ini \
 && ln -s /var/www/html/ /data/www/html/imc \
 
