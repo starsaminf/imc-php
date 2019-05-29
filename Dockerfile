@@ -78,7 +78,7 @@ RUN set -x \
 	&& dpkg -r bison libbison-dev && make clean
 
 	RUN apt-get update
-	RUN apt-get install -y nano 
+	RUN apt-get install -y nano ibgd-dev libfreetype6-dev libjpeg62-turbo-dev libpng12-dev
 	RUN apt-get purge -y --auto-remove autoconf2.13 
     RUN apt-get install -y libxml2-dev
 COPY docker-php-* /usr/local/bin/
@@ -93,14 +93,12 @@ RUN docker-php-ext-install mysql
 RUN docker-php-ext-install json 
 RUN docker-php-ext-install curl 
 RUN docker-php-ext-install fileinfo 
-RUN docker-php-ext-configure gd 
-#--with-freetype-dir=/usr/local/ --with-jpeg-dir=/usr/local/
+RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ 
 RUN docker-php-ext-install gd
+RUN docker-php-ext-install -j$(nproc) gd
 RUN apt-get install -y libc-client-dev
-#RUN docker-php-ext-configure imap --with-imap --with-imap-ssl
 RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl 
 RUN docker-php-ext-install imap
-RUN docker-php-ext-install gd
 RUN docker-php-ext-install mcrypt
 
 RUN  cp /usr/src/php/php.ini-production /usr/local/lib/php.ini \
