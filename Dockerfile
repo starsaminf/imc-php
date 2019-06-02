@@ -2,8 +2,7 @@ FROM buildpack-deps:jessie
 MAINTAINER Eugene Ware <eugene@noblesamurai.com>
 
 RUN apt-get update && apt-get install -y locales apache2-bin apache2-dev apache2.2-common --no-install-recommends  
-RUN apt-get install curl && libmcrypt-dev 
-RUN apt-get install git
+RUN apt-get install curl libmcrypt-dev git libxml2-dev nano ibgd-dev libfreetype6-dev libjpeg62-turbo-dev libpng12-dev
 
 RUN echo America\La_Paz > /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata
 
@@ -73,10 +72,6 @@ RUN set -x \
 	&& make install \
 	&& dpkg -r bison libbison-dev && make clean
 
-	RUN apt-get update
-	RUN apt-get install -y nano ibgd-dev libfreetype6-dev libjpeg62-turbo-dev libpng12-dev
-	RUN apt-get purge -y --auto-remove autoconf2.13 
-    RUN apt-get install -y libxml2-dev
 COPY docker-php-* /usr/local/bin/
 COPY apache2-foreground /usr/local/bin/
 
@@ -137,7 +132,7 @@ RUN git clone --depth 1 git://source.ffmpeg.org/ffmpeg && \
 	config_make --enable-gpl --enable-nonfree \
 		--enable-libopus && \
 	cd .. && rm -rf ffmpeg
-
+RUN apt-get purge -y --auto-remove autoconf2.13 
 RUN rm -rf /var/lib/apt/lists/*
 
 WORKDIR /var/www/html
