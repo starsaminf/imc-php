@@ -1,18 +1,15 @@
 FROM buildpack-deps:jessie
 MAINTAINER Eugene Ware <eugene@noblesamurai.com>
 
-RUN apt-get update && apt-get install -y locales
+RUN apt-get update && apt-get install -y locales apache2-bin apache2-dev apache2.2-common --no-install-recommends  
+RUN apt-get install curl && libmcrypt-dev 
+RUN apt-get install git
+
 RUN echo America\La_Paz > /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata
 
 RUN echo 'es_BO ISO-8859-1'\
 >> /etc/locale.gen &&  \
 usr/sbin/locale-gen
-
-
-RUN apt-get update && apt-get install -y curl libmcrypt-dev && rm -r /var/lib/apt/lists/*
-
-##<apache2>##
-RUN apt-get update && apt-get install -y apache2-bin apache2-dev apache2.2-common --no-install-recommends && rm -rf /var/lib/apt/lists/*
 
 RUN rm -rf /var/www/html && mkdir -p /var/lock/apache2 /var/run/apache2 /var/log/apache2 /var/www/html && chown -R www-data:www-data /var/lock/apache2 /var/run/apache2 /var/log/apache2 /var/www/html
 
@@ -21,7 +18,6 @@ RUN a2dismod mpm_event && a2enmod mpm_prefork
 
 RUN mv /etc/apache2/apache2.conf /etc/apache2/apache2.conf.dist
 COPY apache2.conf /etc/apache2/apache2.conf
-##</apache2>##
 
 RUN gpg --keyserver pgp.mit.edu --recv-keys 0B96609E270F565C13292B24C13C70B87267B52D 0A95E9A026542D53835E3F3A7DEC4E69FC9C83D7
 
@@ -102,8 +98,47 @@ RUN docker-php-ext-install imap
 RUN docker-php-ext-install mcrypt
 
 RUN  cp /usr/src/php/php.ini-production /usr/local/lib/php.ini \
-&& ln -s /var/www/html/ /data/www/html/imc \
+&& ln -s /var/www/html/ /data/www/html/imc
 
+# FFmpeg libx264 - H.264 encodeR
+
+RUN git clone --depth 1 git://git.videolan.org/x264 && \
+	cd x264 && \
+	config_make --enable-static && \
+	cd .. && rm -rf x264
+
+# updated libtool for libfdk_aac
+RUN yum -y install texinfo help2man xz patch
+RUN git clone --depth 1 git://git.savannah.gnu.org/libtool.git && \
+	cd libtool && \
+	./bootstrap && \
+	config_make && \
+	cd .. && rm -rf libtool
+
+# libfdk_aac - AAC encoder
+RUN git clone --depth 1 git://git.code.sf.net/p/opencore-amr/fdk-aac && \
+	cd fdk-aac && \
+	autoreconf -fiv && \
+	config_make --disable-shared && \
+	cd .. && rm -rf fdk-aac
+
+# libmp3lame - MP3 encoder
+RUN curl -L -O http://downloads.sourceforge.net/project/lame/lame/3.99/lame-3.99.5.tar.gz && \
+	tar xzvf lame-3.99.5.tar.gz && \
+	      cd lame-3.99.5        && \
+	config_make --disable-shared --enable-nasm && \
+	cd .. && rm -rf lame-*
+
+# FFmpeg
+#--enable-libx264 --enable-libfdk_aac --enable-libmp3lame \ 
+#--enable-libvorbis --enable-libvpx \
+RUN git clone --depth 1 git://source.ffmpeg.org/ffmpeg && \
+	cd ffmpeg && \
+	config_make --enable-gpl --enable-nonfree \
+		--enable-libopus && \
+	cd .. && rm -rf ffmpeg
+
+RUN rm -rf /var/lib/apt/lists/*
 
 WORKDIR /var/www/html
 
