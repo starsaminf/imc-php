@@ -1,8 +1,11 @@
 FROM buildpack-deps:jessie
 MAINTAINER Eugene Ware <eugene@noblesamurai.com>
 
-RUN apt-get update && apt-get install -y locales apache2-bin apache2-dev apache2.2-common --no-install-recommends  
-RUN apt-get install curl libmcrypt-dev git libxml2-dev nano libgd-dev libfreetype6-dev libjpeg62-turbo-dev libpng12-dev
+RUN apt-get update
+RUN apt-get upgrade
+RUN apt-get install -y locales apache2-bin apache2-dev apache2.2-common --no-install-recommends  
+RUN apt-get install -y curl libmcrypt-dev git libxml2-dev nano libgd-dev libfreetype6-dev libjpeg62-turbo-dev libpng12-dev
+RUN apt-get install -y libc-client-dev
 
 RUN echo America\La_Paz > /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata
 
@@ -87,7 +90,6 @@ RUN docker-php-ext-install fileinfo
 #RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ 
 RUN docker-php-ext-install gd
 #RUN docker-php-ext-install -j$(nproc) gd
-RUN apt-get install -y libc-client-dev
 RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl 
 RUN docker-php-ext-install imap
 RUN docker-php-ext-install mcrypt
