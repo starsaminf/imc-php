@@ -2,7 +2,6 @@ FROM buildpack-deps:jessie
 MAINTAINER Eugene Ware <eugene@noblesamurai.com>
 
 RUN apt-get update
-RUN apt-get upgrade
 RUN apt-get install -y locales apache2-bin apache2-dev apache2.2-common --no-install-recommends  
 RUN apt-get install -y curl libmcrypt-dev git libxml2-dev nano libgd-dev libfreetype6-dev libjpeg62-turbo-dev libpng12-dev
 RUN apt-get install -y libc-client-dev
