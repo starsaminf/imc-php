@@ -27,7 +27,7 @@ ENV GPG_KEYS \
 RUN set -ex \
 	&& for key in $GPG_KEYS; do \
 	apt-key adv --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
-	
+	done
 
 # compile openssl, otherwise --with-openssl won't work
 RUN CFLAGS="-fPIC" && OPENSSL_VERSION="1.0.2d" \
