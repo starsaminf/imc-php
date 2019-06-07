@@ -93,9 +93,7 @@ RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl
 RUN docker-php-ext-install imap
 RUN docker-php-ext-install mcrypt
 
-RUN  cp /usr/src/php/php.ini-production /usr/local/lib/php.ini \
-&& ln -s /var/www/html/ /data/www/html/imc
-
+RUN  cp /usr/src/php/php.ini-production /usr/local/lib/php.ini
 # FFmpeg libx264 - H.264 encodeR
 
 RUN git clone --depth 1 git://git.videolan.org/x264 && \
