@@ -1,5 +1,5 @@
 FROM buildpack-deps:jessie
-MAINTAINER Eugene Ware <eugene@noblesamurai.com>
+MAINTAINER Eugene Ware <starsaminf@gmail.com>
 
 RUN apt-get update
 RUN apt-get install -y locales apache2-bin apache2-dev apache2.2-common --no-install-recommends  
@@ -61,7 +61,6 @@ RUN set -x \
 
 COPY docker-php-* /usr/local/bin/
 COPY apache2-foreground /usr/local/bin/
-
 RUN docker-php-ext-install zip 
 RUN docker-php-ext-install mbstring 
 RUN docker-php-ext-install pdo 
@@ -76,45 +75,13 @@ RUN docker-php-ext-install gd
 RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl 
 RUN docker-php-ext-install imap
 RUN docker-php-ext-install mcrypt
-
 RUN  cp /usr/src/php/php.ini-production /usr/local/lib/php.ini
-# FFmpeg libx264 - H.264 encodeR
+##FFmpeg
+RUN wget https://raw.githubusercontent.com/q3aql/ffmpeg-install/master/ffmpeg-install
+RUN chmod a+x ffmpeg-install
+RUN ./ffmpeg-install --install
 
-RUN git clone --depth 1 git://git.videolan.org/x264 && \
-	cd x264 && \
-	config_make --enable-static && \
-	cd .. && rm -rf x264
 
-# updated libtool for libfdk_aac
-RUN yum -y install texinfo help2man xz patch
-RUN git clone --depth 1 git://git.savannah.gnu.org/libtool.git && \
-	cd libtool && \
-	./bootstrap && \
-	config_make && \
-	cd .. && rm -rf libtool
-
-# libfdk_aac - AAC encoder
-RUN git clone --depth 1 git://git.code.sf.net/p/opencore-amr/fdk-aac && \
-	cd fdk-aac && \
-	autoreconf -fiv && \
-	config_make --disable-shared && \
-	cd .. && rm -rf fdk-aac
-
-# libmp3lame - MP3 encoder
-RUN curl -L -O http://downloads.sourceforge.net/project/lame/lame/3.99/lame-3.99.5.tar.gz && \
-	tar xzvf lame-3.99.5.tar.gz && \
-	      cd lame-3.99.5        && \
-	config_make --disable-shared --enable-nasm && \
-	cd .. && rm -rf lame-*
-
-# FFmpeg
-#--enable-libx264 --enable-libfdk_aac --enable-libmp3lame \ 
-#--enable-libvorbis --enable-libvpx \
-RUN git clone --depth 1 git://source.ffmpeg.org/ffmpeg && \
-	cd ffmpeg && \
-	config_make --enable-gpl --enable-nonfree \
-		--enable-libopus && \
-	cd .. && rm -rf ffmpeg
 RUN apt-get purge -y --auto-remove autoconf2.13 
 RUN rm -rf /var/lib/apt/lists/*
 
