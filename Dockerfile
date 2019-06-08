@@ -4,8 +4,7 @@ MAINTAINER Eugene Ware <eugene@noblesamurai.com>
 RUN apt-get update
 RUN apt-get install -y locales apache2-bin apache2-dev apache2.2-common --no-install-recommends  
 RUN apt-get install -y curl libmcrypt-dev git libxml2-dev nano libgd-dev libfreetype6-dev libjpeg62-turbo-dev libpng12-dev
-RUN apt-get install -y libc-client-dev
-
+RUN apt-get install -y libc-client-dev autoconf2.13 libpng-dev zlib1g-dev  zip
 RUN echo America\La_Paz > /etc/timezone && dpkg-reconfigure --frontend noninteractive tzdata
 
 RUN echo 'es_BO ISO-8859-1'\
@@ -48,15 +47,12 @@ RUN mkdir -p $PHP_INI_DIR/conf.d
 
 # php 5.3 needs older autoconf
 RUN set -x \
-	&& apt-get update && apt-get install -y autoconf2.13 libpng-dev zlib1g-dev  zip && rm -r /var/lib/apt/lists/* \
 	&& curl -SLO http://launchpadlibrarian.net/140087283/libbison-dev_2.7.1.dfsg-1_amd64.deb \
 	&& curl -SLO http://launchpadlibrarian.net/140087282/bison_2.7.1.dfsg-1_amd64.deb \
 	&& dpkg -i libbison-dev_2.7.1.dfsg-1_amd64.deb \
 	&& dpkg -i bison_2.7.1.dfsg-1_amd64.deb \
 	&& rm *.deb \
 	&& curl -SL "http://php.net/get/php-$PHP_VERSION.tar.bz2/from/this/mirror" -o php.tar.bz2 \
-	&& curl -SL "http://php.net/get/php-$PHP_VERSION.tar.bz2.asc/from/this/mirror" -o php.tar.bz2.asc \
-	&& gpg --verify php.tar.bz2.asc \
 	&& mkdir -p /usr/src/php \
 	&& tar -xf php.tar.bz2 -C /usr/src/php --strip-components=1 \
 	&& rm php.tar.bz2* \
@@ -78,7 +74,6 @@ RUN set -x \
 COPY docker-php-* /usr/local/bin/
 COPY apache2-foreground /usr/local/bin/
 
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer 
 RUN docker-php-ext-install zip 
 RUN docker-php-ext-install mbstring 
 RUN docker-php-ext-install pdo 
