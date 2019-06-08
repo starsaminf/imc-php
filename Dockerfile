@@ -24,7 +24,6 @@ RUN CFLAGS="-fPIC" && OPENSSL_VERSION="1.0.2d" \
       && cd /tmp \
       && mkdir openssl \
       && curl -sL "https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz" -o openssl.tar.gz \
-      && gpg --verify openssl.tar.gz.asc \
       && tar -xzf openssl.tar.gz -C openssl --strip-components=1 \
       && cd /tmp/openssl \
       && ./config shared && make && make install \
