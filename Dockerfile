@@ -24,7 +24,6 @@ RUN CFLAGS="-fPIC" && OPENSSL_VERSION="1.0.2d" \
       && cd /tmp \
       && mkdir openssl \
       && curl -sL "https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz" -o openssl.tar.gz \
-      && curl -sL "https://www.openssl.org/source/openssl-$OPENSSL_VERSION.tar.gz.asc" -o openssl.tar.gz.asc \
       && gpg --verify openssl.tar.gz.asc \
       && tar -xzf openssl.tar.gz -C openssl --strip-components=1 \
       && cd /tmp/openssl \
@@ -32,7 +31,6 @@ RUN CFLAGS="-fPIC" && OPENSSL_VERSION="1.0.2d" \
       && rm -rf /tmp/*
 
 ENV PHP_VERSION 5.3.29
-
 ENV PHP_INI_DIR /usr/local/lib
 RUN mkdir -p $PHP_INI_DIR/conf.d
 
