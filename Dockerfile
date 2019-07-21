@@ -1,5 +1,5 @@
 FROM buildpack-deps:jessie
-MAINTAINER Eugene Ware <starsaminf@gmail.com>
+MAINTAINER Samuel Loza <starsaminf@gmail.com>
 
 RUN apt-get update
 RUN apt-get install -y locales apache2-bin apache2-dev apache2.2-common --no-install-recommends  
